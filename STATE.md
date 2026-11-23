@@ -1,36 +1,40 @@
 # GC V1.0 — STATE
-Last updated: 2026-11-23 09:00 (Africa/Harare) by agent session 1 (boot)
-Current milestone: M0 — Repo, tooling, CI, Supabase project, Vercel preview, PWA shell
-Status: APPROVED by owner 2026-11-23 (cloud items carried forward)
+Last updated: 2026-11-23 09:20 (Africa/Harare) by agent session 2
+Current milestone: M1 — Financial engine (pure TS)
+Status: AWAITING OWNER REVIEW
 
 ## Done this session
-- Read the master prompt; recorded 40 open questions/contradictions (D-001…D-040) and 4 tooling choices (P-001…P-004) in DECISIONS.md, all OPEN.
-- npm-workspaces monorepo: `apps/web`, `packages/engine`, `packages/schema`, `supabase/` (empty placeholders), `docs/`.
-- Driver PWA shell (`/`) and office shell (`/office`): React 19 + TS + Vite 8 + Tailwind 4 + vite-plugin-pwa (Workbox). Installable manifest (standalone, 192/512/maskable icons, theme colour), whole shell precached, "Update available" prompt (registerType `prompt`), sync status pill, bottom bar with safe-area padding, 44px+ targets. No map in the driver app.
-- Tooling: ESLint (with a `parseFloat`/`Math.round` ban in engine/schema), Prettier, TypeScript strict, Vitest across workspaces, Playwright e2e against the production build.
-- GitHub Actions CI: lint, typecheck, unit, build, Playwright offline smoke test.
-- Owner guide: `docs/install-pilot-phone.md` (USB port-forwarding install today; Vercel HTTPS later).
-- No financial rules, no production data, no map work (as instructed).
+- M0 approved by the owner (DECISIONS.md M-000) and committed on `main`. M1 work is on branch `m1-financial-engine`.
+- `packages/schema`: Zod schemas for money (integer minor units + ISO code; ZiG = `ZWG`), FX rates (decimal strings + source + timestamp), and the 12 trip event types the engine reads (two-sided stock/cash handovers, sale with lines and split payments, debt collection, expense reported/reviewed, payment verification, damage, fuel reading, reversal).
+- `packages/engine`:
+  - `operational` (device + server, selling prices only): net sales, tenders and change, tender check, expected cash per currency, amounts expected in company accounts, receivables, stock per product, open items on the status ladder, close readiness.
+  - `economics` (server only): COGS from frozen snapshots, gross profit, approved / pending / disputed costs, confirmed vs provisional contribution, stock check at cost, exposure (cash and stock kept separate), verdicts.
+  - `fx`: exact BigInt rational conversion, no floats.
+  - `ledger`: validation, idempotency (same event N times = once), conflicting resubmission error, reversals.
+  - Every total carries the ids of the events that produced it (Section 2 #9).
+- Section 6 fixtures for Scenarios A, B, B2, C (`packages/engine/src/fixtures/section6.ts`, test-only).
+- Filled in the Commands table in CLAUDE.md.
+- 8 new OPEN questions (D-041…D-048) for rules the engine had to assume.
 
 ## Tests
-- Scenarios: A ✘  B ✘  B2 ✘  C ✘  D1–D4 ✘  E ✘  (not started — M1/M3; placeholders as `it.todo`)
-- Typecheck ✔ / lint ✔ / unit ✔ (8 passed, 4 todo) / e2e ✔ (3 passed: installable manifest, reopens offline incl. unvisited `/office`, no map requests)
-- Build: initial JS 70.9 KB gzipped (budget 250 KB). Checked at 360px width in the browser pane.
+- Scenarios: A ✔  B ✔  B2 ✔  C ✔  D1–D4 ✘ (M3)  E ✘ (M3)
+- Typecheck ✔ / lint ✔ / prettier ✔ / unit ✔ 66 passed (scenarios 32, engine integrity 21, fx 6, schema 2, web 5) / e2e ✔ 3 passed
+- Build ✔ — driver shell initial JS 70.9 KB gzipped (budget 250 KB). No UI changes this milestone.
 
 ## Next 3 tasks
-1. Owner runs the airplane-mode check on the pilot phone (docs/install-pilot-phone.md) and reports phone model (D-038).
-2. Finish M0 cloud items once approved: Git remote (D-003), staging Supabase project + Vercel preview (D-002), then confirm CI runs green on the remote.
-3. On owner approval of M0: start M1 by writing Scenario A/B/B2/C fixtures as failing engine tests.
+1. Owner reviews M1 and answers the questions that affect the engine (D-005, D-013, D-018, D-041…D-048).
+2. On approval: M2 — Supabase schema and migrations (`trip_events` append-only), auth, roles, device registration.
+3. M2: `permissions.ts` + RLS + idempotent `ingest-events` function, with one test per permission-matrix row.
 
 ## Blockers / owner decisions needed
-- D-002 / D-003: Supabase staging project, Vercel project and Git host — needs owner accounts/approval. M0 is not fully "done" until these exist.
-- D-005, D-006, D-013, D-019, D-025 should be answered before M1 (they change engine fixtures).
-- D-001: canonical file name of the master prompt.
-- P-001…P-004: tooling choices to approve.
+- M2 needs a Supabase project (local CLI is enough to start; staging needs the owner's account, D-002) and a Git remote (D-003).
+- Engine questions: D-041 (FX rounding), D-042 (handover custody), D-043 (verdict thresholds), D-044 (receivables currency), D-045 (fuel cost), D-046 (rejected payments), D-047 (ZWG code), D-048 (damage in economics).
+- Still open from M0: D-001, D-038 (pilot phone check), P-001…P-004.
 
 ## Known risks / tech debt
-- `npm audit`: 4 moderate advisories in build-time deps (minimatch via workbox-build, pulled by vite-plugin-pwa 2.0). Build-only, not shipped to phones; recheck when vite-plugin-pwa updates.
-- TypeScript pinned to ~6.0 because typescript-eslint does not support TS 7 yet.
-- Locally, e2e uses installed Google Chrome (`channel: 'chrome'`); CI uses Playwright Chromium.
-- Background location limitation of PWAs (Section 5) still applies; M9 only with approval.
-- M0 committed on `main` (no remote yet).
+- Engine ids are any non-empty string so fixtures stay readable; M2 ingestion must require UUIDs.
+- Multi-currency price lists are refused (D-020): a sale priced in ZiG throws `UnsupportedError` until decided.
+- `npm audit`: 4 moderate advisories in build-time deps (via vite-plugin-pwa → workbox-build). Not shipped to phones.
+- TypeScript pinned to ~6.0 (typescript-eslint does not support TS 7 yet).
+- Background-location limitation of PWAs (Section 5) still applies; M9 only with approval.
+- No Git remote yet, so CI has not run on GitHub.

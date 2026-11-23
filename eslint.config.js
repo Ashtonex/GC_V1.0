@@ -5,7 +5,14 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**', '**/dev-dist/**', '**/node_modules/**', '**/playwright-report/**', '**/test-results/**', '**/*.tsbuildinfo'],
+    ignores: [
+      '**/dist/**',
+      '**/dev-dist/**',
+      '**/node_modules/**',
+      '**/playwright-report/**',
+      '**/test-results/**',
+      '**/*.tsbuildinfo',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

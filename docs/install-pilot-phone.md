@@ -81,11 +81,11 @@ Write down the phone make, model and Android version (it goes into DECISIONS.md 
 
 ## If something goes wrong
 
-| What you see                                             | What to do                                                                                         |
-| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| The phone does not appear in `chrome://inspect`          | Use a different cable (some only charge), re-tap **Allow** on the phone, check USB debugging is on |
-| No **Install app** in the ⋮ menu                         | Make sure the address is exactly `http://localhost:4173` (not the PC's IP address); update Chrome  |
-| Offline, it shows the dinosaur / "No internet" page      | Go online, open the app, wait 10 s, refresh once, close it, and repeat the airplane-mode check     |
-| A yellow **Update available** bar appears                | Tap **Update**. (From M3 on, updates wait until all sales are synced.)                             |
+| What you see                                        | What to do                                                                                         |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| The phone does not appear in `chrome://inspect`     | Use a different cable (some only charge), re-tap **Allow** on the phone, check USB debugging is on |
+| No **Install app** in the ⋮ menu                    | Make sure the address is exactly `http://localhost:4173` (not the PC's IP address); update Chrome  |
+| Offline, it shows the dinosaur / "No internet" page | Go online, open the app, wait 10 s, refresh once, close it, and repeat the airplane-mode check     |
+| A yellow **Update available** bar appears           | Tap **Update**. (From M3 on, updates wait until all sales are synced.)                             |
 
 Report the result (pass/fail, phone model, Android version, Chrome version) to the agent at the start of the next session.

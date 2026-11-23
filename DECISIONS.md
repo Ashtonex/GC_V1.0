@@ -101,6 +101,24 @@ master prompt left them unspecified; they are easy to reverse and also need owne
 
 **D-040** · 2026-11-22 · Section 2 #10 status ladder has an implicit order but no rule on who moves items between the middle steps (e.g. Reconciliation difference → Unresolved shortage), or when (time-based?). · OPEN · —
 
+## G. Raised during M1 (engine). The engine follows the Section 6 numbers; these are the rules it had to assume where Section 6 is silent. Each is isolated in one place so it is cheap to change.
+
+**D-041** · 2026-11-23 · FX rounding. The engine converts with exact fractions; an inexact result is rounded **half away from zero** to the cent. When checking that a sale's payments add up to its total, each inexact conversion may be off by 1 cent. Owner/accountant to confirm the rounding rule (`packages/engine/src/fx.ts`, `operational.ts`) · OPEN · —
+
+**D-042** · 2026-11-23 · Two-sided handover custody. Engine rule: custody follows the **receiver's** count; if the issuer's count differs, both are kept and a "handover discrepancy" open item is raised. A **disputed** handover moves nothing into custody until it is resolved. Confirm · OPEN · —
+
+**D-043** · 2026-11-23 · Verdict thresholds. Engine: `loss` if confirmed contribution < 0; `provisional loss` if confirmed ≥ 0 but provisional < 0; `profitable` only if both are > 0; otherwise `break even`. Confirm · OPEN · —
+
+**D-044** · 2026-11-23 · Receivables are kept **per currency of the payment** (credit in USD raises a USD balance; a ZiG collection would reduce a ZiG balance, not USD). Linked to D-022 · OPEN · —
+
+**D-045** · 2026-11-23 · Fuel cost in M1 = **approved fuel purchase expenses only**. Gauge readings are reported as approximate information and add no cost. This matches Scenario A but leaves D-013/D-014 open · OPEN · —
+
+**D-046** · 2026-11-23 · Unverified or **rejected** EcoCash/swipe/transfer payments are open items that block `CLOSED` (Scenario A implies verification is required). A rejected payment is not put on the loss ladder. Should a rejected payment become a cash shortfall for the driver, or a receivable from the customer? · OPEN · —
+
+**D-047** · 2026-11-23 · ZiG is stored with ISO code **`ZWG`** (Section 2 #4 requires an ISO code) and shown as "ZiG" on screen. Confirm · OPEN · —
+
+**D-048** · 2026-11-23 · Damaged stock (D-017): the engine counts it in the stock check at cost but it does **not** change contribution. Confirm or decide where damage goes in the economics · OPEN · —
+
 ---
 
 ## M. Milestone sign-offs

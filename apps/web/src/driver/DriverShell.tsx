@@ -28,9 +28,7 @@ export function DriverShell() {
         <p data-testid="placeholder" className="text-2xl font-bold">
           Driver app — M0 shell
         </p>
-        <p className="text-slate-300">
-          Installed and working. Trips, sales and cash arrive in later milestones.
-        </p>
+        <p className="text-slate-300">Installed and working. Trips, sales and cash arrive in later milestones.</p>
         <p className="text-sm text-slate-400">Version {__APP_VERSION__}</p>
       </main>
 
