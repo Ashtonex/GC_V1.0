@@ -79,7 +79,7 @@ master prompt left them unspecified; they are easy to reverse and also need owne
 
 **D-030** · 2026-11-22 · Driver corrections: "own unsynced draft only". Is an unsynced draft an event in the append-only ledger? Proposal: a draft (sale not yet completed) is not an event; once "Sale saved" commits locally it is an event and can only be corrected by a new event, even before sync · OPEN · —
 
-**D-031** · 2026-11-22 · Edge Functions list (ingest-events, approve, verify, close-trip) has no function for revoke-device, confirm-loss, create-user or merge-customer, although these are server-side role-checked actions. Proposal: add them as needed in M2 · OPEN · —
+**D-031** · 2026-11-22 · Edge Functions list (ingest-events, approve, verify, close-trip) has no function for revoke-device, confirm-loss, create-user or merge-customer, although these are server-side role-checked actions. Proposal: add them as needed in M2 · M2 update: `ingest-events`, `approve`, `verify`, `close-trip` built; device registration/revocation are role-checked database functions; confirm-loss goes through ingestion (`LOSS_CONFIRMED`, Owner only); create-user (needs the Supabase admin API) is deferred to M4 back office · OPEN · —
 
 **D-032** · 2026-11-22 · Scenario E: "events it recorded before revocation are quarantined". Since an offline device does not know it was revoked, all events uploaded by a revoked device go to quarantine, whatever their `occurred_at`. Confirm · OPEN · —
 
@@ -122,6 +122,30 @@ master prompt left them unspecified; they are easy to reverse and also need owne
 ---
 
 **D-049** · 2026-11-23 · Follow-up to D-046 (approved: a rejected non-cash payment stays an open item, not on the loss ladder). Still to decide: when a rejected payment is finally resolved, does it become a cash shortfall for the driver or a receivable from the customer? Needed by M7 · OPEN · —
+
+## H. Raised during M2 (database, permissions, ingestion). Each is an interim rule, isolated in one place, and easy to change.
+
+**D-050** · 2026-11-23 · Office-paid trip expenses (e.g. the Scenario A driver allowance). The matrix says only the Driver reports trip expenses, but Scenario A has an office-paid allowance. Interim: Owner/Accounts may record an expense **only with `paid_from = office`**; it still needs a second person to approve it. Linked to D-015 (`check_event`, 0003 migration) · OPEN · —
+
+**D-051** · 2026-11-23 · "A driver sees only … its customers". No link between customers and a trip/route exists, and the driver must pick existing customers to sell to. Interim: a driver with a trip in progress can read the organisation's active (unmerged) customers, including credit limits. Linked to D-036 · OPEN · —
+
+**D-052** · 2026-11-23 · Who records damaged stock, and when. Interim: the trip driver while DISPATCHED, or Warehouse at return (RETURNED/RECONCILING) · OPEN · —
+
+**D-053** · 2026-11-23 · A sale line priced differently from the trip's price list (e.g. the price list changed after the phone cached it). Interim: the sale is **accepted** and a `price_mismatch` exception goes to Accounts. A real sale is never dropped. An explicit discount above the Owner's limit is still **rejected** · OPEN · —
+
+**D-054** · 2026-11-23 · Credit over the limit, or a customer with no limit set. The phone enforces its cached limit (M6); the server cannot "undo" goods already handed over. Interim: **accept** and raise `credit_over_limit` for Accounts. Linked to D-023 · OPEN · —
+
+**D-055** · 2026-11-23 · Late arrivals. If the Owner marks a trip RETURNED while the phone is still offline, sales recorded before that arrive after the trip has left DISPATCHED. Today they are **rejected** (kept in full as a visible exception, never lost). Should a sale whose `occurred_at` is before `returned_at` be accepted instead? Needed by M3 · OPEN · —
+
+**D-056** · 2026-11-23 · Data-model change: the unit cost snapshot is stored in a separate append-only table `sale_line_costs`, not as a column on `sale_lines` (Section 4 model). Reason: drivers may read their own sale lines, and Postgres RLS cannot hide one column, so a cost column would leak to the phone (Section 4B rule 5) · OPEN · —
+
+**D-057** · 2026-11-23 · Until the Owner sets an Accounts expense-approval limit for a currency, Accounts can mark evidence reviewed but cannot approve or dispute; those go to the Owner ("Needs Owner"). The limit itself is a Section 10 decision (M6). Tests use USD 100.00 · OPEN · —
+
+**D-058** · 2026-11-23 · Time windows used by the server: stock issue only while LOADING; cash floats while LOADING or AWAITING_ACCEPTANCE; driver expenses, sales, collections, new customers only while DISPATCHED; fuel readings AWAITING_ACCEPTANCE→RETURNED; returns and cash handover in RETURNED/RECONCILING; losses in RECONCILING / CLOSED_WITH_EXCEPTIONS. `business_date` uses Africa/Harare (the D-012 proposal). Confirm · OPEN · —
+
+**D-059** · 2026-11-23 · Dispatch currently checks the stock issue and a driver response to every handover. The "safety-critical defect blocks dispatch" check arrives with the departure checklist events in M5. Confirm this is acceptable for M2 · OPEN · —
+
+**P-005** · 2026-11-23 · Database tests run in **Vitest against PGlite** (real Postgres 18 compiled to WebAssembly, in-process) plus a small stand-in for Supabase's `auth` schema and roles, instead of pgTAP on a Docker stack. Reason: Docker was not available, and this also runs in CI with no Docker. Risk: Supabase runs Postgres 15/17 and its real `auth` setup; the same migrations and tests must still be run once on local Supabase or staging before M3 is signed off · OPEN (agent choice) · agent
 
 ---
 

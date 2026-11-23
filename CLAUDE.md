@@ -60,8 +60,10 @@ docs/                   owner guides
 | Typecheck / lint | `npm run typecheck` / `npm run lint` |
 | Unit tests (engine) | `npm test` (all workspaces) · `npx vitest run packages/engine` (engine only) |
 | E2E tests | `npm run test:e2e` (builds, serves on :4173, runs Playwright in Chrome) |
-| Local Supabase | `TBD` (M2) |
-| Apply migrations (local) | `TBD` (M2) |
+| Database tests (no Docker) | `npx vitest run --project supabase` (PGlite: migrations + RLS + permissions + ingestion + Edge handlers) |
+| Local Supabase (needs Docker) | `supabase start` · stop: `supabase stop` |
+| Apply migrations (local) | `supabase db reset` (applies `supabase/migrations`; not yet run, see STATE.md) |
+| Edge Functions (local) | `supabase functions serve` |
 
 ## Definition of done for any task
 - Tests written and passing, including every earlier milestone gate.

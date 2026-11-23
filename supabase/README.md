@@ -1,6 +1,8 @@
 # supabase/
 
-Empty in M0. Filled in from M2. Nothing here is connected to any Supabase project yet (see DECISIONS.md D-002).
+Built in M2. Nothing here is connected to any Supabase project yet (see DECISIONS.md D-002).
+
+Tests run with `npx vitest run --project supabase` against PGlite (in-process Postgres) and the stand-in for Supabase auth in `tests/harness/supabase-stub.sql` (P-005). No Docker is needed. `_shared/handlers.ts` holds the Edge Function logic and is tested; `_shared/supabase.ts` is the Deno wiring.
 
 | Folder        | Contents (from M2)                                                                                    |
 | ------------- | ----------------------------------------------------------------------------------------------------- |
