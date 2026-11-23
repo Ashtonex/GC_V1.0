@@ -1,0 +1,13 @@
+{
+  "name": "@gc/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pure TypeScript financial engine (no UI, no DB). Built test-first in M1 against Section 6 scenarios.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

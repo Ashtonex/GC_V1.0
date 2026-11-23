@@ -1,0 +1,18 @@
+node_modules/
+dist/
+dev-dist/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+.vercel/
+supabase/.temp/
+supabase/.branches/
+
+# Secrets: never commit. Copy .env.example to .env.local instead.
+.env
+.env.*
+!.env.example
+
+.DS_Store
+Thumbs.db
