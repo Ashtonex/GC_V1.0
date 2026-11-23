@@ -1,10 +1,11 @@
 # GC V1.0 — STATE
-Last updated: 2026-11-23 09:20 (Africa/Harare) by agent session 2
-Current milestone: M1 — Financial engine (pure TS)
-Status: AWAITING OWNER REVIEW
+Last updated: 2026-11-23 (Africa/Harare) by agent session 2
+Current milestone: M2 — Database schema, auth, roles, device registration, RLS, idempotent ingestion
+Status: BLOCKED (local Supabase prerequisites; see Blockers)
+Previous: M1 — Financial engine — APPROVED by owner 2026-11-23 (M-001), merged to `main`
 
 ## Done this session
-- M0 approved by the owner (DECISIONS.md M-000) and committed on `main`. M1 work is on branch `m1-financial-engine`.
+- M0 approved (M-000). M1 approved (M-001) with D-041…D-048 approved as implemented; merged into `main`. New follow-up D-049 (OPEN).
 - `packages/schema`: Zod schemas for money (integer minor units + ISO code; ZiG = `ZWG`), FX rates (decimal strings + source + timestamp), and the 12 trip event types the engine reads (two-sided stock/cash handovers, sale with lines and split payments, debt collection, expense reported/reviewed, payment verification, damage, fuel reading, reversal).
 - `packages/engine`:
   - `operational` (device + server, selling prices only): net sales, tenders and change, tender check, expected cash per currency, amounts expected in company accounts, receivables, stock per product, open items on the status ladder, close readiness.
@@ -22,13 +23,13 @@ Status: AWAITING OWNER REVIEW
 - Build ✔ — driver shell initial JS 70.9 KB gzipped (budget 250 KB). No UI changes this milestone.
 
 ## Next 3 tasks
-1. Owner reviews M1 and answers the questions that affect the engine (D-005, D-013, D-018, D-041…D-048).
-2. On approval: M2 — Supabase schema and migrations (`trip_events` append-only), auth, roles, device registration.
+1. Unblock local Supabase (Docker + Supabase CLI) or agree to use a staging project.
+2. M2 — Supabase schema and migrations (`trip_events` append-only), auth, roles, device registration.
 3. M2: `permissions.ts` + RLS + idempotent `ingest-events` function, with one test per permission-matrix row.
 
 ## Blockers / owner decisions needed
 - M2 needs a Supabase project (local CLI is enough to start; staging needs the owner's account, D-002) and a Git remote (D-003).
-- Engine questions: D-041 (FX rounding), D-042 (handover custody), D-043 (verdict thresholds), D-044 (receivables currency), D-045 (fuel cost), D-046 (rejected payments), D-047 (ZWG code), D-048 (damage in economics).
+- Still open and relevant to the engine later: D-013 (fuel cost rule), D-018 (combined exposure figure), D-049 (rejected payment resolution, by M7).
 - Still open from M0: D-001, D-038 (pilot phone check), P-001…P-004.
 
 ## Known risks / tech debt
