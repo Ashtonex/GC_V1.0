@@ -76,3 +76,21 @@ describe('permission matrix (Section 4B) as data', () => {
     expect(allows([], 'trips.plan')).toBe(false);
   });
 });
+
+describe('event types → permission rows (Edge Function check)', () => {
+  it('maps every client-sendable event type, and nothing server-only', async () => {
+    const { CLIENT_EVENT_TYPES } = await import('./ingest.ts');
+    const { EVENT_ACTIONS } = await import('./permissions.ts');
+    expect(Object.keys(EVENT_ACTIONS).sort()).toEqual([...CLIENT_EVENT_TYPES].sort());
+  });
+
+  it('drivers may not post approvals, verifications or losses; office may not post sales', async () => {
+    const { mayPostEvent } = await import('./permissions.ts');
+    for (const t of ['EXPENSE_REVIEWED', 'PAYMENT_VERIFIED', 'LOSS_CONFIRMED'])
+      expect(mayPostEvent(['driver'], t)).toBe(false);
+    for (const r of ['owner', 'accounts', 'warehouse'] as const) expect(mayPostEvent([r], 'SALE_RECORDED')).toBe(false);
+    expect(mayPostEvent(['driver', 'accounts'], 'PAYMENT_VERIFIED', { driverDevice: true })).toBe(false);
+    expect(mayPostEvent(['driver', 'accounts'], 'PAYMENT_VERIFIED')).toBe(true);
+    expect(mayPostEvent(['owner'], 'TRIP_STATUS_CHANGED')).toBe(false);
+  });
+});

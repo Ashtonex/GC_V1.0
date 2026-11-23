@@ -167,3 +167,34 @@ export function allows(roles: readonly Role[], action: Action, ctx: GrantContext
   const grant = bestGrant(roles, action, ctx);
   return grant === 'yes' || grant === 'limited';
 }
+
+/**
+ * Which matrix rows may send each client event type. The Edge Function refuses an event when none of the
+ * caller's effective roles has any of these actions; the database then applies the precise rule (own trip,
+ * trip state, limits, separation of duties). Defined here so both layers read one source.
+ */
+export const EVENT_ACTIONS: Record<string, readonly Action[]> = {
+  STOCK_HANDOVER_ISSUED: ['stock.issue', 'returns.count'],
+  STOCK_HANDOVER_RESPONDED: ['handovers.respond_departure', 'returns.count'],
+  // Office issues floats; at the end of the trip the driver hands the cash over (matrix: "hands over").
+  CASH_HANDOVER_ISSUED: ['cash.issue', 'sales.record'],
+  CASH_HANDOVER_RESPONDED: ['handovers.respond_departure', 'cash_handover.receive'],
+  SALE_RECORDED: ['sales.record'],
+  DEBT_COLLECTED: ['sales.record'],
+  CUSTOMER_CREATED: ['customers.create'],
+  // Office-paid trip expenses (allowance) by Owner/Accounts are an interim rule (D-050).
+  EXPENSE_REPORTED: ['expenses.report', 'cash.issue'],
+  EXPENSE_REVIEWED: ['expenses.review'],
+  PAYMENT_VERIFIED: ['payments.verify'],
+  // Damage: driver on the road, warehouse at return (D-052).
+  STOCK_DAMAGED: ['sales.record', 'returns.count'],
+  FUEL_READING: ['handovers.respond_departure'],
+  EVENT_REVERSED: ['corrections.record'],
+  LOSS_CONFIRMED: ['loss.confirm'],
+};
+
+/** Edge-layer check: may these roles send this event type at all? */
+export function mayPostEvent(roles: readonly Role[], type: string, ctx: GrantContext = {}): boolean {
+  const actions = EVENT_ACTIONS[type];
+  return !!actions && actions.some((a) => allows(roles, a, ctx));
+}

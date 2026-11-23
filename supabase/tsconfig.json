@@ -1,0 +1,5 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": { "noEmit": true, "types": ["node"] },
+  "include": ["tests", "functions/_shared/handlers.ts", "functions/_shared/handlers.test.ts", "vitest.config.ts"]
+}
