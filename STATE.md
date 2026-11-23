@@ -26,12 +26,12 @@ Previous: M1 — Financial engine — APPROVED 2026-11-23 (M-001)
 - No UI changes this milestone (no 360px / offline UI check needed).
 
 ## Next 3 tasks
-1. Run the migrations and the database tests once on real Supabase (local CLI with Docker, or a staging project), and run the four Edge Functions in the Deno runtime (`supabase functions serve`).
+1. Run the migrations and the database tests once on real Supabase (local CLI with Docker, or a staging project), and run the four Edge Functions in the Deno runtime (`supabase functions serve`). `supabase/config.toml` now exists (Postgres 17, TOTP two-factor on); owner chose to hold M2 approval until this run (2026-11-23).
 2. Owner review of M2 and of D-050…D-059, P-005.
 3. M3: Dexie outbox + sync client; Scenarios D (D1–D4) and E through a sync test harness.
 
 ## Blockers / owner decisions needed
-- **Docker Desktop opens but its engine never becomes reachable** (its log reports it could not read a licence file, so it is probably waiting on a dialog such as the service agreement or sign-in). The owner needs to open Docker Desktop and clear that. Then: `supabase start`, `supabase db reset`, `supabase functions serve`. Alternatively, approve a staging Supabase project (D-002).
+- **Docker Desktop opens but its engine never becomes reachable** (its log reports it could not read a licence file, so it is probably waiting on a dialog such as the service agreement or sign-in). The owner needs to open Docker Desktop and clear that. Then: `supabase start`, `supabase db reset`, `supabase functions serve` (config is ready). Checked again 2026-11-23: no Docker processes running, engine pipe missing. Alternatively, approve a staging Supabase project (D-002).
 - New OPEN decisions D-050…D-059 and P-005. The most pressing: D-055 (late-arriving sales, needed by M3) and D-054 (credit over limit).
 - Still open: D-002, D-003 (Git remote, so CI has not run on GitHub), D-013, D-018, D-049, D-001, D-038, P-001…P-004.
 
