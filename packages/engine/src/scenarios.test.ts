@@ -3,8 +3,8 @@
  * Every figure in the Section 6 tables is asserted here, in integer minor units (cents).
  */
 import { describe, expect, it } from 'vitest';
-import { economics, operational, type EconomicsContext } from './index';
-import { COSTS, PRICES, asDeviceEvents, scenarioA, scenarioB, scenarioB2, scenarioC } from './fixtures/section6';
+import { economics, operational, type EconomicsContext } from './index.ts';
+import { COSTS, PRICES, asDeviceEvents, scenarioA, scenarioB, scenarioB2, scenarioC } from './fixtures/section6.ts';
 
 const opsCtx = { currency: 'USD', prices: PRICES } as const;
 const econCtx: EconomicsContext = { ...opsCtx, costs: COSTS, costBasis: 'provisional' };

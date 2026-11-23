@@ -25,7 +25,7 @@ master prompt left them unspecified; they are easy to reverse and also need owne
 
 **D-006** · 2026-11-22 · Section 10 says the costing method is needed "by the time M1 is finalised", but Section 6 says to use a fixed standard cost (labelled "provisional") until the accountant confirms. Can M1 be signed off on standard cost alone? · OPEN · —
 
-**D-007** · 2026-11-22 · "One truck, one active trip at a time" — is the limit one active trip **per truck** or **per organisation**? (Affects a DB constraint.) · OPEN · —
+**D-007** · 2026-11-22 · "One truck, one active trip at a time" — is the limit one active trip **per truck** or **per organisation**? (Affects a DB constraint.) · **Per truck.** A truck can have one trip between LOADING and RECONCILING (DRAFT is planning and does not count) · APPROVED (2026-11-23, in chat at M2 start) · owner
 
 ## C. Trip state machine
 
@@ -35,7 +35,7 @@ master prompt left them unspecified; they are easy to reverse and also need owne
 
 **D-010** · 2026-11-22 · "Close with exceptions" is **Owner only** (permission matrix), yet Scenario C says the items are "assigned to Accounts". Confirm: the Owner performs the close-with-exceptions, assigning items to Accounts? · OPEN · —
 
-**D-011** · 2026-11-22 · Transitions not defined: who/what moves `DRAFT → LOADING`, `LOADING → AWAITING_ACCEPTANCE`, `DISPATCHED → RETURNED` (driver taps "Returned"? warehouse starts return count? Accounts?) and `RETURNED → RECONCILING`. Location collection stops at `RETURNED`, so this trigger matters · OPEN · —
+**D-011** · 2026-11-22 · Transitions not defined: who/what moves `DRAFT → LOADING`, `LOADING → AWAITING_ACCEPTANCE`, `DISPATCHED → RETURNED` (driver taps "Returned"? warehouse starts return count? Accounts?) and `RETURNED → RECONCILING`. Location collection stops at `RETURNED`, so this trigger matters · **Split:** Owner/Accounts move DRAFT→LOADING; Warehouse moves LOADING→AWAITING_ACCEPTANCE (loading done); the Driver taps "Returned" for DISPATCHED→RETURNED (Owner/Accounts may do it if the phone is dead); Owner/Accounts move RETURNED→RECONCILING · APPROVED (2026-11-23, in chat at M2 start) · owner
 
 **D-012** · 2026-11-22 · `business_date` is "set at dispatch". In which time zone (assume Africa/Harare, UTC+2)? · OPEN · —
 
@@ -63,7 +63,7 @@ master prompt left them unspecified; they are easy to reverse and also need owne
 
 **D-023** · 2026-11-22 · Credit limits offline: the device needs each customer's current balance to enforce "within cached limit". Is that balance cached on the device, and how are several offline credit sales to one customer counted against it? · OPEN · —
 
-**D-024** · 2026-11-22 · Clock-skew rule is ambiguous for offline events. "Flag events whose device clock differs from server time by more than 10 minutes" — an offline sale synced 6 hours later always has `received_at − occurred_at` of 6 h. Proposal: measure skew as (device clock at upload − server clock at upload) per batch, and apply it to every event in that batch, rather than comparing `occurred_at` with `received_at` · OPEN · —
+**D-024** · 2026-11-22 · Clock-skew rule is ambiguous for offline events. "Flag events whose device clock differs from server time by more than 10 minutes" — an offline sale synced 6 hours later always has `received_at − occurred_at` of 6 h. Proposal: measure skew as (device clock at upload − server clock at upload) per batch, and apply it to every event in that batch, rather than comparing `occurred_at` with `received_at` · **Compare at upload** (the proposal) · APPROVED (2026-11-23, in chat at M2 start) · owner
 
 **D-025** · 2026-11-22 · FX: Section 10 says the Trip Rate vs daily rate decision is needed by M4, but the M1 engine must convert ZiG to USD (S2: ZiG 2,700 = $100). Proposal: M1 engine takes the rate as an input on each payment, so either rule can be plugged in later; fixtures use the TEST rate 27.00 · OPEN · —
 
@@ -71,7 +71,7 @@ master prompt left them unspecified; they are easy to reverse and also need owne
 
 **D-026** · 2026-11-22 · Non-negotiable 1 mentions "an office-side debt collection" not belonging to a trip, but the permission matrix lets only the Driver record collections (own DISPATCHED trip only). Who records office-side collections? · OPEN · —
 
-**D-027** · 2026-11-22 · Roles can be combined, but "drivers never see costs". If one person is both Driver and Owner/Accounts and uses one phone, the device would receive costs. Rule needed: does the Driver role always win on a driver-registered device, or are Driver and office roles kept on separate devices/logins? · OPEN · —
+**D-027** · 2026-11-22 · Roles can be combined, but "drivers never see costs". If one person is both Driver and Owner/Accounts and uses one phone, the device would receive costs. Rule needed: does the Driver role always win on a driver-registered device, or are Driver and office roles kept on separate devices/logins? · **Driver wins on a driver phone:** a request made from a registered driver device only ever gets driver data and driver powers, whatever other roles the person holds. Office work needs an office sign-in on another device · APPROVED (2026-11-23, in chat at M2 start) · owner
 
 **D-028** · 2026-11-22 · Office screens run in the same PWA. Do office devices cache data (including costs) in IndexedDB for offline use, or are office screens online-only? (The "no costs on the device" rule is written for driver phones.) · OPEN · —
 

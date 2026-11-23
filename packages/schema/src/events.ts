@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Currency, FxRate, NonNegativeMoney } from './money';
+import { Currency, FxRate, NonNegativeMoney } from './money.ts';
 
 /**
  * Trip events consumed by the financial engine (M1). The ingest API (M2) validates the same schemas.
@@ -188,6 +188,54 @@ export const EventReversed = z.object({
   reason: z.string().min(1),
 });
 
+/**
+ * A customer created by the driver during a sale on their own trip (Section 3). The id is generated on the
+ * phone so the sale can reference it offline. Duplicate detection (same phone) runs on the server at sync.
+ */
+export const CustomerCreated = z.object({
+  ...Base,
+  type: z.literal('CUSTOMER_CREATED'),
+  customerId: Id,
+  name: z.string().min(1),
+  phone: z.string().min(1).optional(),
+  businessType: z.string().min(1).optional(),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
+});
+
+/**
+ * Section 2 #10: only the Owner may move an item to "Confirmed loss". `itemRef` names the open item
+ * (e.g. a handover id + product, or a cash handover id + currency). The ladder steps before it are M7 (D-040).
+ */
+export const LossConfirmed = z.object({
+  ...Base,
+  type: z.literal('LOSS_CONFIRMED'),
+  itemRef: z.string().min(1),
+  reason: z.string().min(1),
+});
+
+export const TRIP_STATES = [
+  'DRAFT',
+  'LOADING',
+  'AWAITING_ACCEPTANCE',
+  'DISPATCHED',
+  'RETURNED',
+  'RECONCILING',
+  'CLOSED',
+  'CLOSED_WITH_EXCEPTIONS',
+] as const;
+export const TripState = z.enum(TRIP_STATES);
+export type TripState = z.infer<typeof TripState>;
+
+/** Written by the server when a trip changes state (audit trail). Never accepted from a client. */
+export const TripStatusChanged = z.object({
+  ...Base,
+  type: z.literal('TRIP_STATUS_CHANGED'),
+  from: TripState,
+  to: TripState,
+  reason: z.string().min(1).optional(),
+});
+
 export const TripEvent = z.union([
   StockHandoverIssued,
   StockHandoverResponded,
@@ -201,6 +249,9 @@ export const TripEvent = z.union([
   StockDamaged,
   FuelReading,
   EventReversed,
+  CustomerCreated,
+  LossConfirmed,
+  TripStatusChanged,
 ]);
 export type TripEvent = z.infer<typeof TripEvent>;
 export type TripEventType = TripEvent['type'];

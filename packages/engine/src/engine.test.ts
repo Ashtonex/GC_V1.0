@@ -11,8 +11,8 @@ import {
   engine,
   operational,
   type EconomicsContext,
-} from './index';
-import { ACTORS, COSTS, PRICES, TRIP, asDeviceEvents, scenarioA, scenarioB, usd } from './fixtures/section6';
+} from './index.ts';
+import { ACTORS, COSTS, PRICES, TRIP, asDeviceEvents, scenarioA, scenarioB, usd } from './fixtures/section6.ts';
 
 const opsCtx = { currency: 'USD', prices: PRICES } as const;
 const econCtx: EconomicsContext = { ...opsCtx, costs: COSTS, costBasis: 'provisional' };

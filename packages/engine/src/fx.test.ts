@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { FxRate } from '@gc/schema';
-import { FxError, convert, parseDecimal } from './fx';
+import { FxError, convert, parseDecimal } from './fx.ts';
 
 const rate: FxRate = { from: 'USD', to: 'ZWG', rate: '27.00', source: 'TEST', effectiveAt: '2026-01-01' };
 

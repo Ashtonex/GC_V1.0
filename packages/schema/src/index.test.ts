@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ROLES, isRole } from './index';
+import { ROLES, isRole } from './index.ts';
 
 describe('roles (Section 4B)', () => {
   it('has exactly the four V1 roles', () => {

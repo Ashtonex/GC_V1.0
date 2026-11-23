@@ -10,9 +10,9 @@ import {
   type Payment,
   type Tender,
 } from '@gc/schema';
-import { add, addAll, figure, mul, perCurrency, type Figure, type PerCurrency } from './figure';
-import { convert } from './fx';
-import { prepare, type PreparedLedger } from './ledger';
+import { add, addAll, figure, mul, perCurrency, type Figure, type PerCurrency } from './figure.ts';
+import { convert } from './fx.ts';
+import { prepare, type PreparedLedger } from './ledger.ts';
 
 /**
  * engine.operational — totals at SELLING prices only. Runs on the driver's device and on the server.

@@ -1,8 +1,13 @@
 import { CURRENCIES, type Currency, type Money } from '@gc/schema';
-import { mul } from './figure';
-import { convert } from './fx';
-import { prepare } from './ledger';
-import { computeOperational, UnsupportedError, type OperationalContext, type OperationalResult } from './operational';
+import { mul } from './figure.ts';
+import { convert } from './fx.ts';
+import { prepare } from './ledger.ts';
+import {
+  computeOperational,
+  UnsupportedError,
+  type OperationalContext,
+  type OperationalResult,
+} from './operational.ts';
 
 /**
  * engine.economics — COGS, gross profit, direct costs, contribution, stock at cost.
