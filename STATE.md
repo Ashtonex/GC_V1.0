@@ -18,14 +18,14 @@ Previous: M1 — Financial engine — APPROVED 2026-11-23 (M-001)
 
 ## Next 3 tasks
 1. Run M2 against real Supabase: either (a) clear Docker Desktop so `supabase start`, `supabase db reset`, `GC_TEST_DATABASE_URL` Vitest run, and `supabase functions serve` can run locally; and/or (b) run `supabase login` as the account owning `anfdrxfrkwridyamitpx`, then `supabase link --project-ref anfdrxfrkwridyamitpx`, `supabase db push`, and `supabase functions deploy --use-api`.
-2. Owner review and sign-off of M2 and open decisions D-050…D-059, P-005 (especially D-054 and D-055 before M3).
+2. Clarify `D-055` (keep rejecting late sales vs. accept when `occurred_at < returned_at`) and confirm final **M2 sign-off**.
 3. M3: Dexie outbox + sync client; Scenarios D (D1–D4) and E through a sync test harness.
 
 ## Blockers / owner decisions needed
 - **Docker Desktop engine still not running** (`open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified`), blocking `supabase start`, `supabase functions serve`, and running the 80-test suite against local real Postgres (`GC_TEST_DATABASE_URL`).
 - **Supabase CLI account mismatch for `anfdrxfrkwridyamitpx`:** `supabase projects list` shows a different account (`Nirvana`, `UNSTPBL`, `nyangacamp2026`) and `anfdrxfrkwridyamitpx` returns 403. Owner needs to run `supabase login` for the account that owns `anfdrxfrkwridyamitpx` and supply the DB password for `supabase link --project-ref anfdrxfrkwridyamitpx` + `supabase db push`.
-- New OPEN decisions D-050…D-059 and P-005. The most pressing: D-055 (late-arriving sales, needed by M3) and D-054 (credit over limit).
-- Still open: D-002 (Vercel preview + Supabase link), D-013, D-018, D-049, D-001, D-038, P-001…P-004.
+- **`D-055` clarification needed before M3:** `D-050`–`D-054`, `D-056`–`D-059`, `D-012`, and `P-005` were approved (2026-11-25); `D-055` needs an explicit choice (keep rejecting late-arriving sales vs. accept if `occurred_at < returned_at`).
+- Still open: D-002 (Vercel preview + Supabase link), D-004 (Sentry/error monitoring before M3), D-013, D-018, D-049, D-001, D-038, P-001…P-004.
 
 ## Known risks / tech debt
 - Database tests use PGlite (Postgres 18) and a stand-in for Supabase auth; Supabase runs Postgres 15/17. The SQL avoids version-specific features, but it is unproven there until task 1 is done.

@@ -37,7 +37,7 @@ master prompt left them unspecified; they are easy to reverse and also need owne
 
 **D-011** · 2026-11-22 · Transitions not defined: who/what moves `DRAFT → LOADING`, `LOADING → AWAITING_ACCEPTANCE`, `DISPATCHED → RETURNED` (driver taps "Returned"? warehouse starts return count? Accounts?) and `RETURNED → RECONCILING`. Location collection stops at `RETURNED`, so this trigger matters · **Split:** Owner/Accounts move DRAFT→LOADING; Warehouse moves LOADING→AWAITING_ACCEPTANCE (loading done); the Driver taps "Returned" for DISPATCHED→RETURNED (Owner/Accounts may do it if the phone is dead); Owner/Accounts move RETURNED→RECONCILING · APPROVED (2026-11-23, in chat at M2 start) · owner
 
-**D-012** · 2026-11-22 · `business_date` is "set at dispatch". In which time zone (assume Africa/Harare, UTC+2)? · OPEN · —
+**D-012** · 2026-11-22 · `business_date` is "set at dispatch". In which time zone (assume Africa/Harare, UTC+2)? · **Africa/Harare (UTC+2)** (confirmed via D-058) · APPROVED (2026-11-25) · owner
 
 ## D. Financial rules
 
@@ -125,27 +125,27 @@ master prompt left them unspecified; they are easy to reverse and also need owne
 
 ## H. Raised during M2 (database, permissions, ingestion). Each is an interim rule, isolated in one place, and easy to change.
 
-**D-050** · 2026-11-23 · Office-paid trip expenses (e.g. the Scenario A driver allowance). The matrix says only the Driver reports trip expenses, but Scenario A has an office-paid allowance. Interim: Owner/Accounts may record an expense **only with `paid_from = office`**; it still needs a second person to approve it. Linked to D-015 (`check_event`, 0003 migration) · OPEN · —
+**D-050** · 2026-11-23 · Office-paid trip expenses (e.g. the Scenario A driver allowance). The matrix says only the Driver reports trip expenses, but Scenario A has an office-paid allowance. Interim: Owner/Accounts may record an expense **only with `paid_from = office`**; it still needs a second person to approve it. Linked to D-015 (`check_event`, 0003 migration) · APPROVED (2026-11-25, as implemented in M2) · owner
 
-**D-051** · 2026-11-23 · "A driver sees only … its customers". No link between customers and a trip/route exists, and the driver must pick existing customers to sell to. Interim: a driver with a trip in progress can read the organisation's active (unmerged) customers, including credit limits. Linked to D-036 · OPEN · —
+**D-051** · 2026-11-23 · "A driver sees only … its customers". No link between customers and a trip/route exists, and the driver must pick existing customers to sell to. Interim: a driver with a trip in progress can read the organisation's active (unmerged) customers, including credit limits. Linked to D-036 · APPROVED (2026-11-25, as implemented in M2) · owner
 
-**D-052** · 2026-11-23 · Who records damaged stock, and when. Interim: the trip driver while DISPATCHED, or Warehouse at return (RETURNED/RECONCILING) · OPEN · —
+**D-052** · 2026-11-23 · Who records damaged stock, and when. Interim: the trip driver while DISPATCHED, or Warehouse at return (RETURNED/RECONCILING) · APPROVED (2026-11-25, as implemented in M2) · owner
 
-**D-053** · 2026-11-23 · A sale line priced differently from the trip's price list (e.g. the price list changed after the phone cached it). Interim: the sale is **accepted** and a `price_mismatch` exception goes to Accounts. A real sale is never dropped. An explicit discount above the Owner's limit is still **rejected** · OPEN · —
+**D-053** · 2026-11-23 · A sale line priced differently from the trip's price list (e.g. the price list changed after the phone cached it). Interim: the sale is **accepted** and a `price_mismatch` exception goes to Accounts. A real sale is never dropped. An explicit discount above the Owner's limit is still **rejected** · APPROVED (2026-11-25, as implemented in M2) · owner
 
-**D-054** · 2026-11-23 · Credit over the limit, or a customer with no limit set. The phone enforces its cached limit (M6); the server cannot "undo" goods already handed over. Interim: **accept** and raise `credit_over_limit` for Accounts. Linked to D-023 · OPEN · —
+**D-054** · 2026-11-23 · Credit over the limit, or a customer with no limit set. The phone enforces its cached limit (M6); the server cannot "undo" goods already handed over. Interim: **accept** and raise `credit_over_limit` for Accounts. Linked to D-023 · APPROVED (2026-11-25, as implemented in M2) · owner
 
-**D-055** · 2026-11-23 · Late arrivals. If the Owner marks a trip RETURNED while the phone is still offline, sales recorded before that arrive after the trip has left DISPATCHED. Today they are **rejected** (kept in full as a visible exception, never lost). Should a sale whose `occurred_at` is before `returned_at` be accepted instead? Needed by M3 · OPEN · —
+**D-055** · 2026-11-23 · Late arrivals. If the Owner marks a trip RETURNED while the phone is still offline, sales recorded before that arrive after the trip has left DISPATCHED. Today they are **rejected** (kept in full as a visible exception, never lost). Should a sale whose `occurred_at` is before `returned_at` be accepted instead? Needed by M3 · OPEN (clarify choice: A = keep rejecting into `ingest_exceptions`, B = accept if `occurred_at < returned_at`) · —
 
-**D-056** · 2026-11-23 · Data-model change: the unit cost snapshot is stored in a separate append-only table `sale_line_costs`, not as a column on `sale_lines` (Section 4 model). Reason: drivers may read their own sale lines, and Postgres RLS cannot hide one column, so a cost column would leak to the phone (Section 4B rule 5) · OPEN · —
+**D-056** · 2026-11-23 · Data-model change: the unit cost snapshot is stored in a separate append-only table `sale_line_costs`, not as a column on `sale_lines` (Section 4 model). Reason: drivers may read their own sale lines, and Postgres RLS cannot hide one column, so a cost column would leak to the phone (Section 4B rule 5) · APPROVED (2026-11-25, as implemented in M2) · owner
 
-**D-057** · 2026-11-23 · Until the Owner sets an Accounts expense-approval limit for a currency, Accounts can mark evidence reviewed but cannot approve or dispute; those go to the Owner ("Needs Owner"). The limit itself is a Section 10 decision (M6). Tests use USD 100.00 · OPEN · —
+**D-057** · 2026-11-23 · Until the Owner sets an Accounts expense-approval limit for a currency, Accounts can mark evidence reviewed but cannot approve or dispute; those go to the Owner ("Needs Owner"). The limit itself is a Section 10 decision (M6). Tests use USD 100.00 · APPROVED (2026-11-25, as implemented in M2) · owner
 
-**D-058** · 2026-11-23 · Time windows used by the server: stock issue only while LOADING; cash floats while LOADING or AWAITING_ACCEPTANCE; driver expenses, sales, collections, new customers only while DISPATCHED; fuel readings AWAITING_ACCEPTANCE→RETURNED; returns and cash handover in RETURNED/RECONCILING; losses in RECONCILING / CLOSED_WITH_EXCEPTIONS. `business_date` uses Africa/Harare (the D-012 proposal). Confirm · OPEN · —
+**D-058** · 2026-11-23 · Time windows used by the server: stock issue only while LOADING; cash floats while LOADING or AWAITING_ACCEPTANCE; driver expenses, sales, collections, new customers only while DISPATCHED; fuel readings AWAITING_ACCEPTANCE→RETURNED; returns and cash handover in RETURNED/RECONCILING; losses in RECONCILING / CLOSED_WITH_EXCEPTIONS. `business_date` uses Africa/Harare (the D-012 proposal). Confirm · APPROVED (2026-11-25, as implemented in M2) · owner
 
-**D-059** · 2026-11-23 · Dispatch currently checks the stock issue and a driver response to every handover. The "safety-critical defect blocks dispatch" check arrives with the departure checklist events in M5. Confirm this is acceptable for M2 · OPEN · —
+**D-059** · 2026-11-23 · Dispatch currently checks the stock issue and a driver response to every handover. The "safety-critical defect blocks dispatch" check arrives with the departure checklist events in M5. Confirm this is acceptable for M2 · APPROVED (2026-11-25, as implemented in M2) · owner
 
-**P-005** · 2026-11-23 · Database tests run in **Vitest against PGlite** (real Postgres 18 compiled to WebAssembly, in-process) plus a small stand-in for Supabase's `auth` schema and roles, instead of pgTAP on a Docker stack. Reason: Docker was not available, and this also runs in CI with no Docker. Risk: Supabase runs Postgres 15/17 and its real `auth` setup; the same migrations and tests must still be run once on local Supabase or staging before M3 is signed off · OPEN (agent choice) · agent
+**P-005** · 2026-11-23 · Database tests run in **Vitest against PGlite** (real Postgres 18 compiled to WebAssembly, in-process) plus a small stand-in for Supabase's `auth` schema and roles, instead of pgTAP on a Docker stack. Reason: Docker was not available, and this also runs in CI with no Docker. Risk: Supabase runs Postgres 15/17 and its real `auth` setup; the same migrations and tests must still be run once on local Supabase or staging before M3 is signed off · APPROVED (2026-11-25) · owner
 
 ---
 
