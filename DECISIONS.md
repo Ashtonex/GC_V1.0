@@ -13,9 +13,9 @@ master prompt left them unspecified; they are easy to reverse and also need owne
 
 **D-001** · 2026-11-22 · The master prompt says it lives at `GC_MASTER_PROMPT.md`; the file in the repo is named `GC_V1_MASTER_PROMPT.md`. Which name is canonical? (Section 9 loop prompt and repo tree reference `GC_MASTER_PROMPT.md`.) · Proposal: rename to `GC_MASTER_PROMPT.md`. Not done, because only the owner edits that file · OPEN · —
 
-**D-002** · 2026-11-22 · M0's definition of done (Section 7) includes "Supabase project, Vercel preview", but the boot prompt (Section 0) lists only repo, CI, tests and the PWA shell, and says not to connect production data. Creating cloud projects needs the owner's accounts, billing and region choice. · Proposal: the owner creates (or approves the agent creating) a **staging** Supabase project and a Vercel project linked to the Git repo; production comes later. M0 stays open until this is done · OPEN · —
+**D-002** · 2026-11-22 · M0's definition of done (Section 7) includes "Supabase project, Vercel preview", but the boot prompt (Section 0) lists only repo, CI, tests and the PWA shell, and says not to connect production data. Creating cloud projects needs the owner's accounts, billing and region choice. · Update (2026-11-25): Owner created Supabase project `anfdrxfrkwridyamitpx` (`https://anfdrxfrkwridyamitpx.supabase.co`). `supabase link` / `db push` / Edge Function deploy still blocked on CLI account permissions (403 with current CLI login) + remote DB password; Vercel preview still pending · OPEN · —
 
-**D-003** · 2026-11-22 · No Git remote/host is specified, but CI and Vercel previews need one. GitHub Actions is assumed for CI. · Which Git host and repo name? · OPEN · —
+**D-003** · 2026-11-22 · No Git remote/host is specified, but CI and Vercel previews need one. GitHub Actions is assumed for CI. · **GitHub:** `https://github.com/Ashtonex/GC_V1.0.git` · APPROVED (2026-11-25, in chat) · owner
 
 **D-004** · 2026-11-22 · Error monitoring is "Sentry (or equivalent)". Which service, and who owns the account? Needed before M3 (failed-sync visibility) · OPEN · —
 
